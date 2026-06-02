@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cartographie Accès Notion — GIE France Sport Expertise</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;background:#F7F8FA;color:#111827;font-size:14px}
+
+.header{background:#0F1E3C;padding:20px 24px;border-bottom:3px solid #C8A951}
+.header-inner{max-width:1080px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.logo{background:#C8A951;color:#0F1E3C;font-weight:800;font-size:13px;width:36px;height:36px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.title-block{margin-left:10px}
+.title-main{color:#fff;font-size:15px;font-weight:700}
+.title-sub{color:rgba(255,255,255,0.4);font-size:11px;margin-top:1px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:16px;padding:3px 11px;font-size:11px;color:rgba(255,255,255,0.65)}
+.chip b{color:#F0D88A}
+
+.kpi-row{max-width:1080px;margin:16px auto 0;padding:0 24px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.kpi{border-radius:10px;padding:11px 14px;border:1.5px solid transparent}
+.kpi-green{background:#ECFDF5;border-color:#A7F3D0}.kpi-gold{background:#FFFBEB;border-color:#FDE68A}.kpi-blue{background:#EFF6FF;border-color:#BFDBFE}.kpi-gray{background:#F3F4F6;border-color:#E5E7EB}
+.kpi-n{font-size:22px;font-weight:700}
+.kpi-green .kpi-n{color:#065F46}.kpi-gold .kpi-n{color:#78350F}.kpi-blue .kpi-n{color:#1E40AF}.kpi-gray .kpi-n{color:#374151}
+.kpi-l{font-size:11px;margin-top:1px}
+.kpi-green .kpi-l{color:#065F46}.kpi-gold .kpi-l{color:#78350F}.kpi-blue .kpi-l{color:#1E40AF}.kpi-gray .kpi-l{color:#374151}
+
+.controls{max-width:1080px;margin:14px auto 0;padding:0 24px}
+.search-row{display:flex;gap:8px;margin-bottom:10px}
+.search{flex:1;padding:8px 14px;border:1.5px solid #E5E7EB;border-radius:9px;font-family:inherit;font-size:13px;color:#111;background:#fff;outline:none}
+.search:focus{border-color:#2563EB}
+.search::placeholder{color:#9CA3AF}
+.btn-expand{padding:8px 14px;border:1.5px solid #E5E7EB;border-radius:9px;background:#fff;font-family:inherit;font-size:12px;color:#4B5563;cursor:pointer;white-space:nowrap}
+.btn-expand:hover{border-color:#0F1E3C;color:#0F1E3C}
+
+.filters{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:14px}
+.fp{padding:5px 13px;border-radius:16px;border:1.5px solid #E5E7EB;background:#fff;font-size:12px;font-weight:500;color:#4B5563;cursor:pointer;display:inline-flex;align-items:center;gap:5px;font-family:inherit}
+.fp:hover{border-color:#0F1E3C;color:#0F1E3C}
+.fp.on{background:#0F1E3C;border-color:#0F1E3C;color:#fff}
+.fp .d{width:7px;height:7px;border-radius:50%}
+
+.main{max-width:1080px;margin:0 auto;padding:0 24px 40px}
+.count{font-size:11px;color:#9CA3AF;margin-bottom:8px}
+.count b{color:#6B7280}
+
+.card{background:#fff;border:1.5px solid #E5E7EB;border-radius:12px;margin-bottom:7px;overflow:hidden;transition:border-color .15s}
+.card:hover{border-color:#9CA3AF}
+.card.open{border-color:#1A2B4A;box-shadow:0 2px 10px rgba(15,30,60,.07)}
+.card.hide{display:none}
+
+.card-head{display:flex;align-items:center;gap:10px;padding:11px 16px;cursor:pointer;user-select:none}
+.co-av{width:32px;height:32px;border-radius:7px;background:#0F1E3C;color:#F0D88A;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.co-name{font-size:13px;font-weight:600;color:#0F1E3C;flex:1;min-width:0}
+.badges{display:flex;gap:4px;flex-wrap:wrap}
+.b{font-size:10px;font-weight:600;padding:2px 7px;border-radius:12px;white-space:nowrap}
+.b-ca{background:#FFFBEB;color:#78350F;border:1px solid #FDE68A}
+.b-fo{background:#EFF6FF;color:#1D4ED8;border:1px solid #BFDBFE}
+.b-us{background:#FEF2F2;color:#B91C1C;border:1px solid #FECACA}
+.b-ks{background:#F0FDF4;color:#14532D;border:1px solid #BBF7D0}
+.b-jg{background:#FFFBEB;color:#92400E;border:1px solid #FDE68A}
+.b-st{background:#F3F4F6;color:#4B5563;border:1px solid #E5E7EB}
+.co-cnt{font-size:11px;color:#9CA3AF;white-space:nowrap}
+.chev{color:#9CA3AF;font-size:11px;transition:transform .2s;flex-shrink:0}
+.card.open .chev{transform:rotate(180deg)}
+
+.card-body{display:none;border-top:1.5px solid #F3F4F6}
+.card.open .card-body{display:block}
+
+.prow{display:flex;align-items:center;gap:9px;padding:8px 16px;border-bottom:1px solid #F3F4F6}
+.prow:last-child{border-bottom:none}
+.prow:hover{background:#FAFAFA}
+.pav{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;flex-shrink:0}
+.pav-ca{background:#FFFBEB;color:#78350F}
+.pav-tf{background:#EFF6FF;color:#1D4ED8}
+.pav-st{background:#F3F4F6;color:#4B5563}
+.pname{font-size:12px;font-weight:500;flex:1;color:#111827}
+.pdots{display:flex;gap:4px}
+.dot{width:8px;height:8px;border-radius:50%}
+.dot-fo{background:#2563EB}.dot-us{background:#DC2626}.dot-ks{background:#16A34A}.dot-jg{background:#D97706}.dot-off{background:#E5E7EB}
+.paccess{font-size:10px;color:#9CA3AF;white-space:nowrap;margin-left:4px}
+
+.legend{max-width:1080px;margin:0 auto;padding:0 24px 8px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;font-size:11px;color:#6B7280}
+.li{display:flex;align-items:center;gap:4px}
+.ld{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.legend-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#9CA3AF}
+.legend-right{margin-left:auto;font-size:10px;color:#9CA3AF}
+
+.noRes{text-align:center;padding:40px;color:#9CA3AF;display:none}
+
+footer{text-align:center;padding:18px;font-size:10px;color:#9CA3AF;border-top:1px solid #E5E7EB;margin-top:8px}
+
+@media(max-width:600px){
+  .header{padding:14px 14px}.kpi-row,.controls,.main{padding-left:12px;padding-right:12px}
+  .kpi-row{grid-template-columns:repeat(2,1fr)}
+  .chips,.paccess{display:none}
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <div style="display:flex;align-items:center">
+      <div class="logo">FSE</div>
+      <div class="title-block">
+        <div class="title-main">Cartographie des accès Notion</div>
+        <div class="title-sub">GIE France Sport Expertise</div>
+      </div>
+    </div>
+    <div class="chips">
+      <div class="chip"><b>32</b>&nbsp;entreprises</div>
+      <div class="chip"><b>71</b>&nbsp;personnes</div>
+      <div class="chip"><b>15</b>&nbsp;membres CA</div>
+      <div class="chip"><b>4</b>&nbsp;Task Forces</div>
+    </div>
+  </div>
+</header>
+
+<div class="kpi-row" id="kpiRow"></div>
+
+<div class="controls">
+  <div class="search-row">
+    <input class="search" type="search" placeholder="Rechercher une entreprise ou une personne…" oninput="doSearch(this.value)">
+    <button class="btn-expand" onclick="toggleAll(this)">Tout ouvrir</button>
+  </div>
+  <div class="filters" id="filters"></div>
+</div>
+
+<div class="main">
+  <div class="count" id="countLine"></div>
+  <div id="grid"></div>
+  <div class="noRes" id="noRes">Aucun résultat</div>
+</div>
+
+<div class="legend">
+  <span class="legend-title">Légende TF</span>
+  <div class="li"><div class="ld dot-fo"></div>Football</div>
+  <div class="li"><div class="ld dot-us"></div>USA</div>
+  <div class="li"><div class="ld dot-ks"></div>KSA &amp; Golfe</div>
+  <div class="li"><div class="ld dot-jg"></div>Jeux &amp; GE</div>
+  <div class="li"><div class="ld dot-off"></div>Non membre</div>
+  <span class="legend-right">Mis à jour — juin 2026</span>
+</div>
+
+<footer>GIE France Sport Expertise · Cartographie interne des accès Notion · Document confidentiel</footer>
+
+<script>
+var ROWS=[
+["Alcor Equipements","Eric LEPORT","O","O","O","O","O"],
+["Armonia","Benoit HONART","N","O","N","O","N"],
+["Armonia","Barbara GRANDSIRE","N","O","N","O","N"],
+["Armonia","Youssef EL KADIRI","N","O","N","O","N"],
+["Auditoire","Xavier DAURIAN","N","O","N","O","N"],
+["Auditoire","Philippe CASTANET","N","O","N","O","N"],
+["Auditoire","Bertille PERSON","N","O","N","O","N"],
+["BPCE","Chantal de VITRY-ALARDET","O","N","N","N","N"],
+["Cryo Control","Bertrand AVIGNON","O","O","O","O","N"],
+["Cryo Control","Jill ROGER","N","O","O","O","N"],
+["DIMA SPORTS","Alexandre BOBIN","N","O","N","O","N"],
+["DRAGO Paris","Mathieu MARCAUD","N","O","N","N","N"],
+["DRAGO Paris","Florent ROQUES","N","O","N","N","N"],
+["DRAGO Paris","Jean-Charles ROCHER","N","O","N","N","N"],
+["Enygea","Sophie BART","N","N","N","N","N"],
+["Eventeam","Karim HERIDA","N","O","N","O","O"],
+["Eventeam","Frédéric SANAUR","N","O","N","O","O"],
+["GL Events","Jean-Guillaume LACOSTE","N","O","O","O","O"],
+["GL Events","Bruno LARTIGUE","O","O","O","O","O"],
+["GL Events","Sophie CLERE","N","O","O","O","O"],
+["GL Events","Ludovic MOULLIN","N","O","O","O","O"],
+["Hurricane","Antonin HARDY","N","N","O","O","N"],
+["Hurricane","Mathias ICARD","N","N","O","O","N"],
+["KENEO","Vincent De BARY","O","O","N","O","N"],
+["KENEO","Bénédicte ROUBY","N","O","N","O","N"],
+["KENEO","Valérie Fignon","N","O","N","O","N"],
+["KENEO","Eric Le Jeunne","N","O","N","O","N"],
+["Loca Cuisines","Clément BARTHELEMY","N","O","N","N","N"],
+["Loca Cuisines","Philippe BEATO","O","O","N","N","N"],
+["LOXAM","Florence VALLEE","N","O","N","O","N"],
+["LOXAM","Gaël ROUGEUX","O","O","N","O","N"],
+["MEENT","Alain GHIBAUDO","O","O","N","O","N"],
+["MEENT","Rodolphe FOURGEOT","N","O","N","O","N"],
+["MEENT","Philippe GASLY","N","O","N","O","N"],
+["Metalu-plast","Guillaume DEGUERRY","O","O","O","O","N"],
+["Metalu-plast","Adil SARHIRI","N","O","O","O","N"],
+["MyCoachPro","Lucas POIREL","N","O","N","N","N"],
+["MyCoachPro","Cédric MESSINA","O","O","N","N","N"],
+["MyCoachPro","Cindy SPAZIANI","N","O","N","N","N"],
+["MyComm","Gregory SEVAULT","N","N","O","N","N"],
+["MyComm","Amandine FOURCAULT-HASSANA","N","N","O","N","N"],
+["Natural Grass","Augustin ROCHEMANN","N","O","O","O","N"],
+["Natural Grass","Bertrand PICARD","O","O","O","O","N"],
+["OCPR","Franck TCHAVOUCHIAN","N","O","N","O","N"],
+["OCPR","Vincent NEVEU","N","O","N","O","N"],
+["OCPR","Elsa TOULLER","N","O","N","O","N"],
+["Odiho","Gauthier DALLE","N","O","N","N","N"],
+["Orange Events","Anne RODHAIN","O","O","N","O","N"],
+["Orange Events","Helena LAPORTE","N","O","N","O","N"],
+["Orange Events","Raphaël LESTIENNE","N","O","N","O","N"],
+["Osmose Ingénierie","François ROUSSEAU","N","O","O","O","N"],
+["Osmose Ingénierie","Ewen BRICOUT","N","O","O","O","N"],
+["Osmose Ingénierie","Richard CARON","N","O","O","O","N"],
+["Petit Forestier","Aminata TRAORE","N","O","O","N","N"],
+["Petit Forestier","Lydie de ACARREGUI","N","O","O","N","N"],
+["Petit Forestier","François VIGNAUD","N","O","O","N","N"],
+["Playground","Yohann ARZUR","N","O","N","N","N"],
+["Playground","Pierre LEMEE","N","O","N","N","N"],
+["Sodexo Live!","Carole COLIN-KJAER","O","N","N","N","N"],
+["Spartner Event & Consulting","Jéremy BOTTON","N","O","O","O","N"],
+["Spartner Event & Consulting","Nicolas GERBAUT","N","O","O","O","N"],
+["Spartner Event & Consulting","Claire RABES","N","O","O","O","N"],
+["Spartner Event & Consulting","Pierre MEYJONADE","N","O","O","O","N"],
+["Spartner Event & Consulting","Julien MONTEL","N","O","O","O","N"],
+["VIParis","Arnaud BURLIN","N","N","N","N","N"],
+["VIParis","Vincent PACCARD","N","N","N","N","N"],
+["VOGO","Christophe CARNIEL","O","O","N","O","N"],
+["VOGO","Carole BARASCUD","N","O","N","O","N"],
+["VOGO","Luka MARENDAZ","N","O","N","O","N"],
+["VPI Agency","Vincent GIRAUD","N","N","O","N","N"],
+["XAW Sports","Patrick VAJDA","N","N","O","N","N"],
+["XAW Sports","Akim KHADDA-LATOUR","N","N","O","N","N"],
+["XD Motion","Benoit DENTAN","N","N","N","O","N"]
+];
+
+// Build company objects
+var COS={};
+ROWS.forEach(function(r){
+  var co=r[0],name=r[1],ca=r[2]==="O",tf=[r[3]==="O",r[4]==="O",r[5]==="O",r[6]==="O"];
+  if(!COS[co])COS[co]=[];
+  COS[co].push({n:name,ca:ca,tf:tf});
+});
+var DATA=Object.keys(COS).map(function(k){return{co:k,people:COS[k]};});
+
+var TFL=["Football","USA","KSA & Golfe","Jeux & GE"];
+var DOTCLS=["dot-fo","dot-us","dot-ks","dot-jg"];
+var BDGCLS=["b-fo","b-us","b-ks","b-jg"];
+var BDGTXT=["Football","USA","KSA & Golfe","Jeux & GE"];
+
+var activeFilter="all",searchQ="",openAll=false;
+
+function y(v){return v==="O"||v===true;}
+function ntf(p){return p.tf.filter(Boolean).length;}
+function level(p){var n=ntf(p);if(p.ca&&n>0)return"top";if(p.ca)return"ca";if(n>0)return"tf";return"std";}
+function alabel(p){var n=ntf(p);if(p.ca&&n>0)return"CA · "+n+" TF";if(p.ca)return"CA";if(n>0)return n+" TF";return"Standard";}
+
+function inits(s){
+  var w=s.split(/\s+/),up=w.filter(function(x){return x.length>1&&x===x.toUpperCase();});
+  if(up.length>=2)return up[0][0]+up[1][0];
+  if(up.length===1)return up[0].slice(0,2);
+  return w.slice(0,2).map(function(x){return x[0].toUpperCase();}).join("");
+}
+function coinits(s){return s.split(/\s+/).slice(0,2).map(function(w){return w[0].toUpperCase();}).join("");}
+
+function matchF(co){
+  if(activeFilter==="all")return true;
+  if(activeFilter==="ca")return co.people.some(function(p){return p.ca;});
+  if(activeFilter==="fo")return co.people.some(function(p){return p.tf[0];});
+  if(activeFilter==="us")return co.people.some(function(p){return p.tf[1];});
+  if(activeFilter==="ks")return co.people.some(function(p){return p.tf[2];});
+  if(activeFilter==="jg")return co.people.some(function(p){return p.tf[3];});
+  if(activeFilter==="st")return co.people.every(function(p){return !p.ca&&ntf(p)===0;});
+  return true;
+}
+function matchS(co){
+  if(!searchQ)return true;
+  var q=searchQ.toLowerCase();
+  return co.co.toLowerCase().indexOf(q)>=0||co.people.some(function(p){return p.n.toLowerCase().indexOf(q)>=0;});
+}
+
+var FILTERS=[
+  {id:"all",label:"Tous",dot:null},
+  {id:"ca",label:"Membres CA",dot:"#C8A951"},
+  {id:"fo",label:"TF Football",dot:"#2563EB"},
+  {id:"us",label:"TF USA",dot:"#DC2626"},
+  {id:"ks",label:"TF KSA & Golfe",dot:"#16A34A"},
+  {id:"jg",label:"TF Jeux & GE",dot:"#D97706"},
+  {id:"st",label:"Standard seulement",dot:"#9CA3AF"}
+];
+
+function buildFilters(){
+  document.getElementById("filters").innerHTML=FILTERS.map(function(f){
+    return'<button class="fp'+(f.id==="all"?" on":"")+'" onclick="setF(\''+f.id+'\',this)">'
+      +(f.dot?'<span class="d" style="background:'+f.dot+'"></span>':'')+f.label+'</button>';
+  }).join("");
+}
+
+function buildKPI(){
+  var t=0,c=0,tf=0,s=0;
+  DATA.forEach(function(co){co.people.forEach(function(p){var l=level(p);if(l==="top")t++;else if(l==="ca")c++;else if(l==="tf")tf++;else s++;});});
+  document.getElementById("kpiRow").innerHTML=
+    '<div class="kpi kpi-green"><div class="kpi-n">'+t+'</div><div class="kpi-l">CA + TF(s)</div></div>'+
+    '<div class="kpi kpi-gold"><div class="kpi-n">'+c+'</div><div class="kpi-l">CA uniquement</div></div>'+
+    '<div class="kpi kpi-blue"><div class="kpi-n">'+tf+'</div><div class="kpi-l">TF(s) uniquement</div></div>'+
+    '<div class="kpi kpi-gray"><div class="kpi-n">'+s+'</div><div class="kpi-l">Membre standard</div></div>';
+}
+
+function render(){
+  var g=document.getElementById("grid"),nr=document.getElementById("noRes"),cl=document.getElementById("countLine");
+  g.innerHTML="";var shown=0;
+  DATA.forEach(function(co){
+    if(!matchF(co)||!matchS(co))return;
+    shown++;
+    var hasca=co.people.some(function(p){return p.ca;});
+    var tff=[0,1,2,3].map(function(i){return co.people.some(function(p){return p.tf[i];});});
+    var bdg="";
+    if(hasca)bdg+='<span class="b b-ca">CA</span>';
+    tff.forEach(function(h,i){if(h)bdg+='<span class="b '+BDGCLS[i]+'">'+BDGTXT[i]+'</span>';});
+    if(!hasca&&!tff.some(Boolean))bdg+='<span class="b b-st">Standard</span>';
+
+    var phtml=co.people.map(function(p){
+      var lv=level(p),av=lv==="top"||lv==="ca"?"pav-ca":lv==="tf"?"pav-tf":"pav-st";
+      var dots=p.tf.map(function(v,i){return'<div class="dot '+(v?DOTCLS[i]:"dot-off")+'" title="'+TFL[i]+'"></div>';}).join("");
+      return'<div class="prow"><div class="pav '+av+'">'+inits(p.n)+'</div>'
+        +'<div class="pname">'+p.n+'</div>'
+        +'<div class="pdots">'+dots+'</div>'
+        +'<div class="paccess">'+alabel(p)+'</div></div>';
+    }).join("");
+
+    var card=document.createElement("div");
+    card.className="card"+(openAll?" open":"");
+    card.innerHTML='<div class="card-head" onclick="this.parentElement.classList.toggle(\'open\')">'
+      +'<div class="co-av">'+coinits(co.co)+'</div>'
+      +'<div class="co-name">'+co.co+'</div>'
+      +'<div class="badges">'+bdg+'</div>'
+      +'<div class="co-cnt">'+co.people.length+' pers.</div>'
+      +'<div class="chev">&#9660;</div>'
+      +'</div>'
+      +'<div class="card-body">'+phtml+'</div>';
+    g.appendChild(card);
+  });
+  nr.style.display=shown===0?"block":"none";
+  cl.innerHTML="<b>"+shown+"</b> entreprise"+(shown>1?"s":"")+" affichée"+(shown>1?"s":"");
+}
+
+function setF(id,btn){
+  activeFilter=id;
+  document.querySelectorAll(".fp").forEach(function(b){b.classList.remove("on");});
+  btn.classList.add("on");render();
+}
+function doSearch(q){searchQ=q;render();}
+function toggleAll(btn){
+  openAll=!openAll;
+  document.querySelectorAll(".card").forEach(function(c){c.classList.toggle("open",openAll);});
+  btn.textContent=openAll?"Tout fermer":"Tout ouvrir";
+}
+
+buildFilters();buildKPI();render();
+</script>
+</body>
+</html>
